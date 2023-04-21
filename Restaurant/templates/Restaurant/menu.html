@@ -1,0 +1,18 @@
+{% extends 'Restaurant/base.html' %}
+{% block content %}
+<h1>Menu</h1>
+<form action="{% url 'order' %}" method="post">
+    {% csrf_token %}
+    {% for item in menu_items %}
+        <div>
+            <label for="{{ item.id}}">
+                {{ item.dishName }} - {{ item.dishPrice }}
+            </label>
+        </div>
+    {% endfor %}
+
+    <div>
+        <button type="submit">Order</button>
+    </div>
+</form>
+{% endblock %}

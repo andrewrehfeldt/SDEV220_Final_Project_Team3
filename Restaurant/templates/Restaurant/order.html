@@ -1,0 +1,30 @@
+{% extends 'Restaurant/base.html' %}
+{% block content %}
+<h1>Order</h1>
+<form action="{% url 'order' %}" method="post">
+    {% csrf_token %}
+    <div>
+      <label for="id_customer_name">Name:</label>
+      {{ form.customerName }}
+    </div>
+    <div>
+      <label for="id_customer_email">Email:</label>
+      {{ form.customerEmail }}
+    </div>
+    <br>
+    <h3>Order Items:</h3>
+    {% for item in menu_items %}
+    <div>
+      <label for="id_order_items_{{ item.id }}">
+        <input type="checkbox" name="order_items" id="id_order_items_{{ item.id }}" value="{{ item.id }}"> {{ item.dishName }} - {{ item.dishPrice }}
+      </label>
+      <br></br>
+      <input type="number" name="quantity_{{ item.id }}" value="1" min="1" max="10">
+      <input  type="text" name="customize_{{item.id}}">
+      <br></br>
+    </div>
+    {% endfor %}
+    </br>
+    <button type="submit">Submit Order</button>
+  </form>
+{% endblock %}
