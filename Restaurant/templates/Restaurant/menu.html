@@ -5,8 +5,8 @@
     {% csrf_token %}
     {% for item in menu_items %}
         <div>
-            <label for="{{ item.id}}">
-                {{ item.dishName }} - {{ item.dishPrice }}
+            <label for="{{ item.id }}">
+                {{ item.dishName }} - {{ item.price }}
             </label>
         </div>
     {% endfor %}

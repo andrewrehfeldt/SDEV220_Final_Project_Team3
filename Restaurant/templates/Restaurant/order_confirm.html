@@ -1,17 +1,34 @@
 {% extends 'Restaurant/base.html' %}
 
 {% block content %}
-<h1>Order Confirmation</h1>
+  <h1>Order Confirmation</h1>
+  <p>Thank you for your order, {{ customer_order.customer.name }}.</p>
+  <h2>Order Details</h2>
+  <p><strong>Order Number:</strong> {{ customer_order.pk }}</p>
+  <p><strong>Customer Name:</strong> {{ customer_order.customer.customerName }}</p>
+  <p><strong>Customer Email:</strong> {{ customer_order.customer.customerEmail }}</p>
+  <p><strong>Total Price:</strong> {{ customer_order.total_price }}</p>
 
-<p>Thank you for your order, {{ order.cutomerName }}!</p>
-
-<p>Your order includes:</p>
-
-<ul>
-  {% for item in order.items.all %}
-    <li>{{ item.menu_item.dishName }} x {{ item.quantity }} - ${{ item.get_item_price }}</li>
-  {% endfor %}
-</ul>
-
-<p>Total price: ${{ order.total_price }}</p>
+  <h2>Order Items</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Dish Name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order_item in order_items %}
+        <tr>
+          <td>{{ order_item.item.dishName }}</td>
+          <td>${{ order_item.price }}</td>
+          <td>{{ order_item.quantity }}</td>
+        </tr>
+      {% endfor %}
+      <tr>
+        <td colspan="3"><strong>Total price:</strong> ${{ customer_order.total_price }}</td>
+      </tr>
+    </tbody>
+  </table>
 {% endblock %}

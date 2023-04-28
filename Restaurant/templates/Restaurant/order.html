@@ -1,30 +1,45 @@
 {% extends 'Restaurant/base.html' %}
+
 {% block content %}
-<h1>Order</h1>
-<form action="{% url 'order' %}" method="post">
-    {% csrf_token %}
-    <div>
-      <label for="id_customer_name">Name:</label>
-      {{ form.customerName }}
-    </div>
-    <div>
-      <label for="id_customer_email">Email:</label>
-      {{ form.customerEmail }}
-    </div>
-    <br>
-    <h3>Order Items:</h3>
-    {% for item in menu_items %}
-    <div>
-      <label for="id_order_items_{{ item.id }}">
-        <input type="checkbox" name="order_items" id="id_order_items_{{ item.id }}" value="{{ item.id }}"> {{ item.dishName }} - {{ item.dishPrice }}
-      </label>
-      <br></br>
-      <input type="number" name="quantity_{{ item.id }}" value="1" min="1" max="10">
-      <input  type="text" name="customize_{{item.id}}">
-      <br></br>
-    </div>
-    {% endfor %}
-    </br>
-    <button type="submit">Submit Order</button>
-  </form>
+    <div class="container">
+        <h2>Order</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <h4>Select Items:</h4>
+            <div class="form-group">
+                {% for item in menu_items %}
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="item_ids" value="{{ item.id }}" id="item_{{ item.id }}">
+                        <label for="item_{{ item.id }}" class="form-check-label">{{ item.dishName }} - ${{ item.price }}</label>
+                        <input type="number" class="form-control" name="quantity_{{ item.id }}" value="1" min="1" max="10">
+                    </div>
+                {% endfor %}
+            </div>
+
+        
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#submitModal">
+          Submit Order!
+        </button>
+        <!-- <button class="btn btn-dark mt-5">Place Order!</button> -->
+
+        <!-- Modal -->
+        <div class="modal fade" id="submitModal" tabindex="-1" role="dialog" aria-labelledby="submitModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="submitModalLabel">Submit Your Order!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Go Back</button>
+                <button type="submit" class="btn btn-dark">Place Order!</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
 {% endblock %}

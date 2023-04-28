@@ -16,37 +16,26 @@ class Customer(models.Model):
 class Menu(models.Model):
     dishName = models.CharField(max_length=200)
     description = models.TextField(blank=False)
-    dishPrice = models.DecimalField(max_digits=5, decimal_places=2)
-    finishTime = models.IntegerField()
+    price = models.DecimalField(max_digits=6, decimal_places=2)
     
     def __str__(self):
         return self.dishName
     
 class CustomerOrder(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    items = models.ManyToManyField(Menu, blank=True)
-    #customize = models.TextField(blank=True, null=True, max_length=200)
     orderDate = models.DateTimeField(default=timezone.now)
-    total_price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
-    
-    def get_total_price(self):
-        total_price = 0
-        for item in self.items.all():
-            total_price += item.get_item_price()
-        return total_price
+    total_price = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    items = models.ManyToManyField(Menu, through='OrderItem')
     
     def __str__(self):
-        return f"{self.customer}'s order on {self.orderDate}"
+        return f"{self.customer.customerName} - ${self.total_price}"
     
 class OrderItem(models.Model):
-    order = models.ForeignKey(CustomerOrder, on_delete=models.CASCADE)
+    order = models.ForeignKey(CustomerOrder, on_delete=models.CASCADE, name='order_items')
     menu_item = models.ForeignKey(Menu, on_delete=models.CASCADE)
+    customize = models.TextField(blank=True, null=True)
     quantity = models.PositiveIntegerField()
+    price = models.DecimalField(max_digits=6, decimal_places=2)
     
-    def get_item_price(self):
-        return (self.menu_item.dishPrice * self.quantity)
-        
     def __str__(self):
-        return f"{self.menu_item.dishName} x {self.quantity} in order {self.order.id}"
-    
-    
+        return str(self.id)
