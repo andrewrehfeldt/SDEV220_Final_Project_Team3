@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib import messages
-from .models import Menu, Customer, CustomerOrder, OrderItem
-from .forms import OrderItemForm, CustomerOrderForm, CustomerForm
+from django.core.mail import send_mail
+from .models import Menu, CustomerOrder, OrderItem, OrderItemDetails
+
 
 # Create your views here.
 
@@ -11,40 +12,77 @@ def menu_list(request):
     return render(request, 'Restaurant/menu.html', {'menu_items':menu_items})
 
 
-def order(request):S
+def order(request, *args, **kwargs):
     if request.method == 'POST':
-        form = CustomerForm(request.POST or None)
-        if form.is_valid():
-            customer = form.cleaned_data.get('customer')
-            item_ids = request.POST.getlist('item_ids')
-            order_items = []
-            total_price = 0
+        name = request.POST.get('name')
+        email = request.POST.get('email')
         
-            for item_id in item_ids:
-                menuItem = Menu.objects.get(pk=item_id)
-                quantity= int(request.POST.get(f'quantity_{item_id}', 0))
-                if quantity > 0:
-                    order_item = OrderItem(menu_item=menuItem, price=menuItem.price, quantity=quantity)
-                    order_item.save()
-                    order_items.append(order_item)
-                    total_price += (menuItem.price * quantity)
+        order_items = {
+            'items': []
+        }
+        
+        items = request.POST.getlist('items[]')
+        
+        for item in items:
+            menu_item = Menu.objects.get(pk=int(item))
+            quantity = int(request.POST.get(f'quantity_{item}'))
+            customization = request.POST.get(f'customization_{item}')
+            item_data = {
+                'id': menu_item.pk,
+                'name': menu_item.dishName,
+                'price': menu_item.price,
+                'quantity': quantity,
+                'customization': customization
+            }
+            order_items['items'].append(item_data)
             
-            customer_order = CustomerOrder(customer=customer, total_price=total_price)
-            customer_order.save()
-            customer_order.items.set([o.id for o in order_items])S
-            
-            messages.success(request, 'Order placed successfully!')
-            return redirect('order_confirm', pk=customer_order.pk)
+        total_price = 0
+        quantity = 0
+        item_ids = []
+        
+        for item in order_items['items']:
+            total_price += item['price'] * item['quantity']
+            item_ids.append(item['id'])
+            quantity += item['quantity']
+        
+        customer_order = CustomerOrder.objects.create(
+            customer_name=name,
+            customer_email=email,
+            total_price=total_price
+        )
+        print(customer_order)
+        
+        order_item = OrderItem.objects.create(
+            order=customer_order,
+            quantity=quantity
+        )
+        order_item.menu_items.set(item_ids)
+        print(order_item)
+        for item in order_items['items']:
+            menu_item = Menu.objects.get(pk=item['id'])
+            order_item_details =  OrderItemDetails.objects.create(
+                order_item=order_item,
+                menu_item=menu_item,
+                quantity=item['quantity'],
+                customization=item['customization']
+            )
+        print(order_items)
+        return redirect('order_confirm', pk=order_item.pk)
+        
     else:
-        form = CustomerForm()
+        pass
     menu_items = Menu.objects.all()
-    return render(request, 'Restaurant/order.html', {'menu_items': menu_items, 'form': form})
-
+    return render(request, 'Restaurant/order.html', {'menu_items':menu_items})
+    
 def order_confirm(request, pk):
-    customer_order = get_object_or_404(CustomerOrder, pk=pk)
-    order_items = customer_order.items.all()
-    context = {'customer_order': customer_order, 'order_items': order_items}
-    return render(request, 'Restaurant/order_confirm.html', context)
+    order_item = get_object_or_404(OrderItem, pk=pk)
+    order_item_details = OrderItemDetails.objects.filter(order_item=order_item)
+    context = {
+        'order_item': order_item,
+        'order_item_details': order_item_details
+    }
+    
+    return render(request, 'Restaurant/order_confirm.html', context=context)
 
 def about(request):
     return render(request, 'Restaurant/about.html', {})

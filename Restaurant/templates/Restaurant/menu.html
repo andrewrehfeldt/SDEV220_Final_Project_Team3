@@ -1,18 +1,21 @@
 {% extends 'Restaurant/base.html' %}
 {% block content %}
-<h1>Menu</h1>
-<form action="{% url 'order' %}" method="post">
-    {% csrf_token %}
-    {% for item in menu_items %}
-        <div>
-            <label for="{{ item.id }}">
-                {{ item.dishName }} - {{ item.price }}
-            </label>
-        </div>
-    {% endfor %}
-
-    <div>
-        <button type="submit">Order</button>
+<div class="container">
+  <h1 class="text-center">Menu</h1>
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <ul class="list-group">
+        {% for menu_item in menu_items %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <h5 class="mb-1">{{ menu_item.dishName }}</h5>
+            <p class="mb-1">{{ menu_item.description }}</p>
+          </div>
+          <span class="badge badge-primary badge-pill">${{ menu_item.price }}</span>
+        </li>
+        {% endfor %}
+      </ul>
     </div>
-</form>
+  </div>
+</div>
 {% endblock %}

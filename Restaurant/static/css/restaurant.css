@@ -21,6 +21,9 @@ body {
     font-size: 36pt;
     text-decoration: none;
 }
+.items-box {
+    height: 800px;
+ }
 
 h1,
 h2,
@@ -63,6 +66,14 @@ h4 {
 .post > .date,
 .post > .actions {
     float: right;
+}
+
+.quantity-input{
+    width: 100px;
+}
+
+.customization-input {
+    width: 3000px;
 }
 
 .btn-secondary,
