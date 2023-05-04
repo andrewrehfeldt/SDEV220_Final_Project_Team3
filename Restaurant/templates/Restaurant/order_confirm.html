@@ -1,35 +1,47 @@
 {% extends 'Restaurant/base.html' %}
 
 {% block content %}
-<h1>Order Confirmation</h1>
-<br>
-<h3>Name: {{order_item.order.customer_name}}</h3>
-<h3>Email: {{order_item.order.customer_email}}</h3>
-<br>
-<br>
-<h2>Order Summary</h2>
-<br>
-<table style="width: 100%; height: 500px;">
-  <thead>
-    <tr>
-      <th><strong>Dish Name</strong></th>
-      <th><strong>Quantity</strong></th>
-      <th><strong>Price</strong></th>
-      <th><strong>Customization</strong></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for item in order_item_details %}
-      <tr>
-        <td>{{ item.menu_item.dishName }}</td>
-        <td>{{ item.quantity }}</td>
-        <td>${{ item.menu_item.price }}</td>
-        <td>{{ item.customization }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">{{ order_item.order.order_date|date:"F d, Y H:i" }}</div>
 
-<p><strong>Total Price: ${{ order_item.order.total_price }}</strong></p>
-<h4>Thank you for your order!</h4>
+                <div class="card-body">
+                    <h4>Order Details</h4>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Dish Name</th>
+                                <th>Quantity</th>
+                                <th>Customization</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for detail in order_item_details %}
+                            <tr>
+                                <td>{{ detail.menu_item.dishName }}</td>
+                                <td>{{ detail.quantity }}</td>
+                                <td>{{ detail.customization }}</td>
+                                <td>{{ detail.menu_item.price }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3">Total</th>
+                                <td>{{ order_item.order.total_price }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <div class="text-right">
+                        <a href="{% url 'menu_list' %}" class="btn btn-secondary">Back to Menu</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
+
