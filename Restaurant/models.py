@@ -21,8 +21,7 @@ class CustomerOrder(models.Model):
     total_price = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.customer_name} - Total Price: ${self.total_price} on {self.orderDate.strftime('(%B, %d %Y) %H:%M:%S')}"
-    
+        return f"{self.customer_name} - Total Price: ${self.total_price}"
 class OrderItem(models.Model):
     order = models.ForeignKey(CustomerOrder, on_delete=models.CASCADE, blank=True, null=True)
     menu_items = models.ManyToManyField(Menu, blank=True)
