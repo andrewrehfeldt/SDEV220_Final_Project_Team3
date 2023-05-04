@@ -14,4 +14,5 @@ I have built the models, some html files for the restaurant.
 But the system still can't store the order in the admin page,
 I will try to fix it and redirect the order page to the order confirmation page.
 
-
+#Wed 05/04/2023
+I have added the login and logout functions, and allow the user to see their profile by clicking a button on the navbar.
