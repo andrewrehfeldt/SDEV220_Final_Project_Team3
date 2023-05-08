@@ -1,0 +1,17 @@
+{% extends 'Restaurant/base.html' %}
+
+{% block content %}
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2 text-center">
+        <h2 class="mb-4">Welcome to Yats!</h2>
+        <p class="lead mb-5">An Indianapolis staple serving up Cajun and Creole cuisine for an affordable price.</p>
+        <a href="{% url 'menu_list' %}" class="btn btn-primary btn-lg">View Our Menu</a>
+        <a href="{% url 'order' %}" class="btn btn-primary btn-lg">Place an order</a>
+        <hr class="my-5">
+        <p class="text-muted">At this time, we do not offer any delivery through third party services, so all orders must be picked up in person.</p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

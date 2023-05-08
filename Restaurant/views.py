@@ -7,6 +7,10 @@ from .models import Menu, CustomerOrder, OrderItem, OrderItemDetails
 
 # Create your views here.
 
+def homepage(request):
+    return render(request, 'Restaurant/homepage.html')
+
+
 def menu_list(request):
     menu_items = Menu.objects.all()
     return render(request, 'Restaurant/menu.html', {'menu_items':menu_items})
